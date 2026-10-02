@@ -1,0 +1,27 @@
+.DS_Store
+.env
+.env.*
+
+# Backend
+backend/log/*
+!backend/log/.keep
+backend/tmp/*
+!backend/tmp/.keep
+backend/storage/*
+!backend/storage/.keep
+backend/config/master.key
+backend/.byebug_history
+# Built frontend is copied here by the Docker build, never committed.
+backend/public/index.html
+backend/public/assets/
+backend/public/favicon.svg
+
+# Frontend
+frontend/node_modules
+frontend/dist
+frontend/*.local
+frontend/coverage
+
+# Local tooling
+.claude/
+COMMIT_GUIDE.md
