@@ -1,0 +1,17 @@
+# Render Blueprint: one Docker web service. SQLite lives on a persistent disk;
+# the seed runs once on first boot (it is idempotent).
+services:
+  - type: web
+    name: acme-salary
+    runtime: docker
+    plan: starter
+    healthCheckPath: /up
+    envVars:
+      - key: SECRET_KEY_BASE
+        generateValue: true
+      - key: DATABASE_PATH
+        value: /app/storage/production.sqlite3
+    disk:
+      name: data
+      mountPath: /app/storage
+      sizeGB: 1
