@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { api, ApiError, toQueryString } from './client'
+import { api, ApiError, setCsrfToken, toQueryString } from './client'
 
 function mockFetch(status: number, body?: unknown) {
   const fetchMock = vi.fn().mockResolvedValue(
@@ -9,7 +9,10 @@ function mockFetch(status: number, body?: unknown) {
   return fetchMock
 }
 
-afterEach(() => vi.unstubAllGlobals())
+afterEach(() => {
+  vi.unstubAllGlobals()
+  setCsrfToken(null)
+})
 
 describe('toQueryString', () => {
   it('drops empty values', () => {
@@ -53,5 +56,33 @@ describe('api', () => {
   it('handles 204 No Content on delete', async () => {
     mockFetch(204)
     await expect(api.deleteEmployee(5)).resolves.toBeUndefined()
+  })
+})
+
+describe('CSRF token', () => {
+  const session = { user: null, csrf_token: 'token-abc' }
+
+  it('is remembered from the session response and sent on writes only', async () => {
+    const fetchMock = mockFetch(200, session)
+    await api.session()
+
+    await api.deleteEmployee(5).catch(() => {})
+    await api.overview()
+
+    const [, deleteCall, readCall] = fetchMock.mock.calls
+    expect(deleteCall[1].headers['X-CSRF-Token']).toBe('token-abc')
+    expect(readCall[1].headers['X-CSRF-Token']).toBeUndefined()
+  })
+
+  it('is replaced after signing in, because the server rotates it', async () => {
+    mockFetch(200, session)
+    await api.session()
+
+    const fetchMock = mockFetch(201, { user: null, csrf_token: 'token-new' })
+    await api.signIn('hr@acme.example', 'a-test-password')
+    await api.signOut()
+
+    expect(fetchMock.mock.calls[0][1].headers['X-CSRF-Token']).toBe('token-abc')
+    expect(fetchMock.mock.calls[1][1].headers['X-CSRF-Token']).toBe('token-new')
   })
 })

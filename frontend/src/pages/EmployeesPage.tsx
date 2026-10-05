@@ -17,7 +17,7 @@ import { useDebouncedCallback, useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 import { IconChevronDown, IconChevronUp, IconPlus, IconSearch, IconSelector } from '@tabler/icons-react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { useCreateEmployee, useEmployees, useMeta } from '../api/hooks'
+import { useCanManageEmployees, useCreateEmployee, useEmployees, useMeta } from '../api/hooks'
 import type { EmployeeFilters } from '../api/types'
 import { EmployeeForm } from '../components/EmployeeForm'
 import { QueryState } from '../components/QueryState'
@@ -33,6 +33,7 @@ export function EmployeesPage() {
   const meta = useMeta()
   const employees = useEmployees({ ...filters, per_page: PER_PAGE })
   const createEmployee = useCreateEmployee()
+  const canManage = useCanManageEmployees()
   const [addOpen, { open: openAdd, close: closeAdd }] = useDisclosure(false)
 
   const update = (next: EmployeeFilters) => setSearchParams(filtersToSearchParams(next), { replace: true })
@@ -55,9 +56,11 @@ export function EmployeesPage() {
             {formatNumber(total)} {hasFilters ? 'matching' : 'total'}
           </Text>
         </div>
-        <Button leftSection={<IconPlus size={16} />} onClick={openAdd} disabled={!meta.data}>
-          Add employee
-        </Button>
+        {canManage && (
+          <Button leftSection={<IconPlus size={16} />} onClick={openAdd} disabled={!meta.data}>
+            Add employee
+          </Button>
+        )}
       </Group>
 
       <Paper withBorder p="md" radius="md">

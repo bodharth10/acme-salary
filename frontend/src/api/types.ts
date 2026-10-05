@@ -1,5 +1,22 @@
 export type EmploymentType = 'full_time' | 'part_time' | 'contractor'
 
+export type Role = 'hr_manager' | 'viewer'
+
+export interface User {
+  id: number
+  name: string
+  email: string
+  role: Role
+  permissions: { manage_employees: boolean }
+}
+
+// `user` is null when nobody is signed in. The CSRF token must accompany
+// every state-changing request.
+export interface Session {
+  user: User | null
+  csrf_token: string
+}
+
 export interface Country {
   code: string
   name: string

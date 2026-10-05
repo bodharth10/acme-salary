@@ -3,7 +3,7 @@ import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 import { IconArrowLeft, IconPencil, IconTrash } from '@tabler/icons-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { useDeleteEmployee, useEmployee, useMeta, useUpdateEmployee } from '../api/hooks'
+import { useCanManageEmployees, useDeleteEmployee, useEmployee, useMeta, useUpdateEmployee } from '../api/hooks'
 import { EmployeeForm } from '../components/EmployeeForm'
 import { PeerComparisonCard } from '../components/PeerComparisonCard'
 import { QueryState } from '../components/QueryState'
@@ -17,6 +17,7 @@ export function EmployeeDetailPage() {
   const employee = useEmployee(id)
   const updateEmployee = useUpdateEmployee(id)
   const deleteEmployee = useDeleteEmployee()
+  const canManage = useCanManageEmployees()
   const [editOpen, edit] = useDisclosure(false)
   const [deleteOpen, del] = useDisclosure(false)
 
@@ -48,14 +49,16 @@ export function EmployeeDetailPage() {
                     </Badge>
                   </Group>
                 </div>
-                <Group>
-                  <Button variant="default" leftSection={<IconPencil size={16} />} onClick={edit.open}>
-                    Edit
-                  </Button>
-                  <Button color="red" variant="light" leftSection={<IconTrash size={16} />} onClick={del.open}>
-                    Delete
-                  </Button>
-                </Group>
+                {canManage && (
+                  <Group>
+                    <Button variant="default" leftSection={<IconPencil size={16} />} onClick={edit.open}>
+                      Edit
+                    </Button>
+                    <Button color="red" variant="light" leftSection={<IconTrash size={16} />} onClick={del.open}>
+                      Delete
+                    </Button>
+                  </Group>
+                )}
               </Group>
 
               <Grid>
