@@ -5,8 +5,6 @@ answer "how do we pay people?" without Excel.
 
 **Stack:** Ruby on Rails 7.2 (API) · SQLite · React 19 + TypeScript (Vite) · Mantine UI · React Query · RSpec · Vitest
 
-**Live demo:** _add your deployed URL here_ · **Video:** _add your video link here_
-
 ## What it does
 
 - **Employee directory:** search, filter (country / department / title), sort, and paginate 10k employees. Filters are kept in the URL.
