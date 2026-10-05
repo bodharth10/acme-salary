@@ -10,7 +10,7 @@ COPY frontend/ ./
 RUN npm run build
 
 # --- 2. Install gems ---------------------------------------------------------
-FROM ruby:3.3.0-slim AS gems
+FROM ruby:3.4.6-slim AS gems
 ENV BUNDLE_DEPLOYMENT=1 BUNDLE_WITHOUT="development:test" BUNDLE_PATH=/usr/local/bundle
 RUN apt-get update -qq && apt-get install -y --no-install-recommends build-essential pkg-config libyaml-dev \
     && rm -rf /var/lib/apt/lists/*
@@ -19,7 +19,7 @@ COPY backend/Gemfile backend/Gemfile.lock ./
 RUN bundle install && rm -rf "${BUNDLE_PATH}"/ruby/*/cache
 
 # --- 3. Runtime --------------------------------------------------------------
-FROM ruby:3.3.0-slim
+FROM ruby:3.4.6-slim
 ENV RAILS_ENV=production BUNDLE_DEPLOYMENT=1 BUNDLE_WITHOUT="development:test" \
     BUNDLE_PATH=/usr/local/bundle RAILS_LOG_TO_STDOUT=1 DATABASE_PATH=/app/storage/production.sqlite3
 RUN apt-get update -qq && apt-get install -y --no-install-recommends sqlite3 \
