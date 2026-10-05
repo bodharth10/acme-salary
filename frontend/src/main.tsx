@@ -9,6 +9,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { App } from './App'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { theme } from './theme'
 
 const queryClient = new QueryClient({
@@ -21,7 +22,9 @@ createRoot(document.getElementById('root')!).render(
       <Notifications position="top-right" />
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <App />
+          <ErrorBoundary>
+            <App />
+          </ErrorBoundary>
         </BrowserRouter>
       </QueryClientProvider>
     </MantineProvider>
