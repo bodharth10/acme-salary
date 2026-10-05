@@ -5,8 +5,22 @@ answer "how do we pay people?" without Excel.
 
 **Stack:** Ruby on Rails 8.1 (API) · SQLite · React 19 + TypeScript (Vite) · Mantine UI · React Query · RSpec · Vitest
 
+## Demo logins
+
+The seed creates two accounts so both roles can be tried. These passwords are public on purpose and
+are for the demo only.
+
+| Role | Email | Password | Can do |
+|---|---|---|---|
+| HR Manager | `hr@acme.example` | `acme-hr-demo-2026` | Everything: view, add, edit, delete |
+| Read-only | `viewer@acme.example` | `acme-viewer-demo-2026` | View employees and insights only |
+
+On a deployment with real data, set `HR_PASSWORD` and `VIEWER_PASSWORD` before seeding, or remove
+these users.
+
 ## What it does
 
+- **Sign-in with two roles:** HR managers can change salary data; read-only users can only view it. The server enforces this on every request.
 - **Employee directory:** search, filter (country / department / title), sort, and paginate 10k employees. Filters are kept in the URL.
 - **Add / edit / delete** with validation. Currency is derived from country, so it can't be wrong.
 - **Pay vs. peers** on every employee: peer median, typical range (p25–p75), compa-ratio, percentile.
@@ -28,7 +42,7 @@ answer "how do we pay people?" without Excel.
 Prerequisites: Ruby 3.4, Node 22.
 
 ```bash
-# API on :3000 (creates the DB and seeds 10,000 employees)
+# API on :3000 (creates the DB, the demo logins and 10,000 employees)
 cd backend
 bundle install
 bin/rails db:prepare db:seed
@@ -42,7 +56,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173.
+Open http://localhost:5173 and sign in with one of the demo logins above.
 
 Re-generate the seed data at any time (deterministic: same data every run):
 
@@ -53,14 +67,15 @@ cd backend && RESEED=1 bin/rails db:seed
 ## Tests
 
 ```bash
-cd backend && bundle exec rspec          # 64 examples, < 1s
-cd frontend && npm test                  # 28 tests, ~1s
+cd backend && bundle exec rspec          # 89 examples, < 1s
+cd frontend && npm test                  # 37 tests, ~2s
 ```
 
 Backend: model validations and normalisation, statistics maths, query filtering/sorting/pagination,
 insights, the seeder (determinism and validity), request specs for every endpoint including
-error cases, and security hardening (headers, rate limiting, database constraints). Frontend: formatting, form validation and mapping, URL filter state, the API client, and
-component tests for the employee form and peer comparison card. CI runs both suites, plus rubocop,
+error cases, authentication and role checks (session expiry, CSRF, login throttling, read-only
+role), and security hardening (headers, rate limiting, database constraints). Frontend: formatting, form validation and mapping, URL filter state, the API client, and
+component tests for the login page, employee form and peer comparison card. CI runs both suites, plus rubocop,
 type-checking, a production build and security scans (Brakeman, bundler-audit, npm audit), on every push (`.github/workflows/ci.yml`).
 
 ## Deploy

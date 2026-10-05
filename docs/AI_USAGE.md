@@ -56,3 +56,10 @@ Tests and manual checks caught these. They're the reason every step was verified
   documented it as the main open risk instead of bolting on a half-built login.
 - **CI caught a real mistake:** the first CI run failed because `db:prepare` seeds a fresh database,
   so specs started with 10,000 rows. Fixed by loading the schema only.
+- **Reversing a scope decision:** after the review I added sign-in and roles. Testing in a real
+  browser found a bug the unit tests had missed: signing out cleared the whole query cache, which
+  detached the app from the session state and left a stale page with an error. Fixed by removing only
+  the salary data from the cache, with a regression test.
+- **Framework detail the AI got wrong first:** in a Rails API-only app, `test.rb`'s setting that
+  disables CSRF checks is not applied to controllers that mix the CSRF module in later, so every spec
+  got 403. The fix reads the setting explicitly in `ApplicationController`.

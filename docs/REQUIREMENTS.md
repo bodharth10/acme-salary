@@ -23,14 +23,15 @@ common pay questions are answered **in seconds, without Excel**.
 | **Peer comparison** on each employee: peer median, p25–p75 range, compa-ratio, percentile | Answers "is this fair?" right at the point of decision. |
 | **Pay insights:** per-country headcount, median, p25–p75, mean, min/max | The org-level "how do we pay people" view. Median first, since means are skewed by outliers. |
 | **Country breakdown:** distribution histogram, by department, by job title; click through to the people | Goes from a number to the employees behind it in one click. |
+| **Sign-in and roles** *(added after the security review; originally out of scope)* | Salary data is sensitive. HR managers can edit; a read-only role covers people who need the numbers but must not change them. |
 | **Seed script:** 10,000 realistic, deterministic employees | Realistic demo data; reproducible numbers. |
 
 ## Deliberately out of scope (and why)
 | Left out | Reasoning |
 |---|---|
 | **Currency conversion / global totals** | Needs an FX source and a policy (which rate, which date). Silently mixing currencies gives *wrong* answers, which is worse than no answer. All stats are within one country. |
-| **Authentication & roles** | Single persona for the exercise. **This is the first thing to add before real data** (salary data is highly sensitive). See SECURITY.md. |
-| **Salary history / audit trail** | High value (who changed what and when), but it doubles the data model. Next on the roadmap after auth. |
+| **Salary history / audit trail** | High value (who changed what and when), but it doubles the data model. Next on the roadmap. |
+| **User management, SSO, password reset** | Users are created by the seed. A real deployment would sign in through the company identity provider rather than store passwords. |
 | **Bulk Excel/CSV import & export** | The obvious migration path off Excel, but it needs its own error-reporting UX. The seed script proves bulk insert works. |
 | **Bonus, equity, payroll, tax, benefits** | Different products. This app manages *base salary* only. |
 | **Levels / salary bands** | Would enable "out of band" alerts, but ACME has no band data yet. Peer p25–p75 is a data-driven proxy. |

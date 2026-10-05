@@ -52,6 +52,14 @@ still be switched on with `CORS_ORIGINS` if the UI is ever hosted separately.
 HR can bookmark "Account Executives in Brazil, highest paid first" or send it to a colleague, and
 refresh and back/forward just work.
 
+**11. Sign-in with a session cookie and two roles.**
+Added after the security review; it was out of scope in the first version. A server-side session in
+an `HttpOnly` cookie was chosen over a JWT in browser storage: scripts cannot read it, so a
+cross-site-scripting bug cannot steal it, and signing out really ends it. The cost is needing CSRF
+protection, which Rails provides. Two roles (HR manager, read-only) are a single method on `User`,
+not a policy framework such as Pundit: one rule does not justify a library. *Trade-off:* passwords are
+stored here (bcrypt) and users come from the seed; a real deployment should use company SSO instead.
+
 ## Performance
 
 Measured locally on 10,000 seeded employees (Apple Silicon, Rails dev server, median of 3 runs):
