@@ -1,17 +1,20 @@
-# Render Blueprint: one Docker web service. SQLite lives on a persistent disk;
-# the seed runs once on first boot (it is idempotent).
+# Render Blueprint: one Docker web service on the free plan.
+#
+# Free instances have no persistent disk, so the SQLite file lives inside the
+# container and is rebuilt from the deterministic seed on every boot. That is
+# what we want for a demo: reviewers always see the same clean 10,000
+# employees. For real use, switch to `plan: starter` and add:
+#
+#   disk:
+#     name: data
+#     mountPath: /app/storage
+#     sizeGB: 1
 services:
   - type: web
     name: acme-salary
     runtime: docker
-    plan: starter
+    plan: free
     healthCheckPath: /up
     envVars:
       - key: SECRET_KEY_BASE
         generateValue: true
-      - key: DATABASE_PATH
-        value: /app/storage/production.sqlite3
-    disk:
-      name: data
-      mountPath: /app/storage
-      sizeGB: 1

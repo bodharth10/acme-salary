@@ -7,7 +7,7 @@ flowchart LR
   subgraph Browser
     UI["React SPA<br/>(Vite + TS + Mantine)<br/>React Query cache"]
   end
-  subgraph "Rails 7.2 (API mode)"
+  subgraph "Rails 8.1 (API mode)"
     R["Routes /api/v1/*"] --> C["Controllers<br/>(thin: params → service → JSON)"]
     C --> Q["EmployeeQuery<br/>filter / sort / paginate"]
     C --> P["PayInsights<br/>overview, country, peers"]
@@ -40,6 +40,8 @@ serves both: the React build is copied into Rails' `public/`, and any non-API pa
 | `app/services/employee_seeder.rb` | Deterministic 10k generator using batched `insert_all` |
 | `app/serializers/employee_serializer.rb` | The one place that defines the employee JSON contract |
 | `app/controllers/api/base_controller.rb` | Uniform error JSON: 400 / 404 / 422 with field errors |
+| `lib/middleware/security_headers.rb` | CSP and other security headers on every response; `no-store` on API responses |
+| `config/initializers/rack_attack.rb` | Per-IP rate limits for reads and writes |
 
 ## API (`/api/v1`)
 

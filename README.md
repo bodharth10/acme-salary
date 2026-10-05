@@ -3,7 +3,7 @@
 Web app for ACME's HR Manager to manage salaries for 10,000 employees across 10 countries, and to
 answer "how do we pay people?" without Excel.
 
-**Stack:** Ruby on Rails 7.2 (API) · SQLite · React 19 + TypeScript (Vite) · Mantine UI · React Query · RSpec · Vitest
+**Stack:** Ruby on Rails 8.1 (API) · SQLite · React 19 + TypeScript (Vite) · Mantine UI · React Query · RSpec · Vitest
 
 ## What it does
 
@@ -19,12 +19,13 @@ answer "how do we pay people?" without Excel.
 | [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) | One-page requirements: goal, scope, what's left out and why |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Diagram, layers, API, data model |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Trade-offs, performance numbers, security notes |
+| [docs/SECURITY.md](docs/SECURITY.md) | OWASP Top 10 review, hardening added, what's needed before real data |
 | [docs/AI_USAGE.md](docs/AI_USAGE.md) | How AI tools were used, prompts, and where AI output was corrected |
 | [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) | Walkthrough used for the video demo |
 
 ## Run locally
 
-Prerequisites: Ruby 3.3, Node 22.
+Prerequisites: Ruby 3.4, Node 22.
 
 ```bash
 # API on :3000 (creates the DB and seeds 10,000 employees)
@@ -52,23 +53,25 @@ cd backend && RESEED=1 bin/rails db:seed
 ## Tests
 
 ```bash
-cd backend && bundle exec rspec          # 54 examples, < 1s
-cd frontend && npm test                  # 26 tests, ~1s
+cd backend && bundle exec rspec          # 64 examples, < 1s
+cd frontend && npm test                  # 28 tests, ~1s
 ```
 
 Backend: model validations and normalisation, statistics maths, query filtering/sorting/pagination,
-insights, the seeder (determinism and validity), and request specs for every endpoint including
-error cases. Frontend: formatting, form validation and mapping, URL filter state, the API client, and
+insights, the seeder (determinism and validity), request specs for every endpoint including
+error cases, and security hardening (headers, rate limiting, database constraints). Frontend: formatting, form validation and mapping, URL filter state, the API client, and
 component tests for the employee form and peer comparison card. CI runs both suites, plus rubocop,
-type-checking and a production build, on every push (`.github/workflows/ci.yml`).
+type-checking, a production build and security scans (Brakeman, bundler-audit, npm audit), on every push (`.github/workflows/ci.yml`).
 
 ## Deploy
 
 A single Docker image builds the React app and serves it from Rails (see [Dockerfile](Dockerfile)).
 
 **Render (one click):** push to GitHub → Render → *New → Blueprint* → pick the repo. [render.yaml](render.yaml)
-creates the web service with a persistent disk for SQLite and a generated `SECRET_KEY_BASE`. The first
-boot seeds the 10,000 employees.
+creates a free web service with a generated `SECRET_KEY_BASE`. Each boot creates the database and seeds
+the 10,000 employees. The free plan has no persistent disk, so the demo resets to the seed data on
+restart, and the first request after idle takes up to a minute while the instance wakes. `render.yaml`
+shows the two lines to add for a persistent disk.
 
 **Any Docker host:**
 

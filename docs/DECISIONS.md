@@ -32,7 +32,7 @@ The compa-ratio (salary / peer median) is the industry-standard single number; w
 **6. SQLite.**
 It's the right size for 10k rows and a single HR user: zero ops, file-based, and fast. Nothing is
 SQLite-specific except the `LIKE` search, so the move to Postgres is a `database.yml` change.
-*Trade-off:* single writer, and it needs a persistent disk in production (configured in `render.yaml`).
+*Trade-off:* single writer, and it needs a persistent disk in production (the demo deploy runs without one and reseeds on boot; see `render.yaml`).
 
 **7. Reference data (countries, departments) lives in code, not tables.**
 It changes rarely, it's reviewed in PRs, and it needs no admin UI. Job titles are *open* (free text
@@ -73,10 +73,7 @@ Measured locally on 10,000 seeded employees (Apple Silicon, Rails dev server, me
   search is debounced (300 ms), and the chart library is lazy-loaded (about 100 kB gzipped) only on
   the country page.
 
-## Security notes (what production would need)
+## Security
 
-- **Authentication + authorization** (e.g. SSO via OIDC; HR-only role). Not built, deliberately; see REQUIREMENTS.md.
-- **Audit log** of salary changes (who/when/old/new).
-- Strong params whitelist every writable field (`employee_code` can't be set by clients; covered by a spec).
-- Sort column/direction are whitelisted (covered by a spec); search terms are escaped for `LIKE`.
-- `force_ssl` on in production; `/up` is excluded from the redirect for health checks.
+See [SECURITY.md](SECURITY.md) for the OWASP Top 10 review, the hardening added from it, and the list
+of what must exist before the app holds real salary data (authentication and an audit trail first).

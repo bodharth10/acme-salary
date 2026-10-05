@@ -29,7 +29,7 @@ common pay questions are answered **in seconds, without Excel**.
 | Left out | Reasoning |
 |---|---|
 | **Currency conversion / global totals** | Needs an FX source and a policy (which rate, which date). Silently mixing currencies gives *wrong* answers, which is worse than no answer. All stats are within one country. |
-| **Authentication & roles** | Single persona for the exercise. **This is the first thing to add before real data** (salary data is highly sensitive). See DECISIONS.md. |
+| **Authentication & roles** | Single persona for the exercise. **This is the first thing to add before real data** (salary data is highly sensitive). See SECURITY.md. |
 | **Salary history / audit trail** | High value (who changed what and when), but it doubles the data model. Next on the roadmap after auth. |
 | **Bulk Excel/CSV import & export** | The obvious migration path off Excel, but it needs its own error-reporting UX. The seed script proves bulk insert works. |
 | **Bonus, equity, payroll, tax, benefits** | Different products. This app manages *base salary* only. |

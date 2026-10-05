@@ -49,3 +49,10 @@ Tests and manual checks caught these. They're the reason every step was verified
 - **Scope control:** I declined suggestions to add Ransack, Pagy and a serializer gem. Each is small
   to write by hand, and hand-written code is easier for a reviewer to read in full.
 - **Bundle size:** the build warned about a 900 kB chunk, so I lazy-loaded the chart page.
+- **Security review:** I asked for an OWASP Top 10 audit after the feature work. The scanners found
+  what a read-through missed: Rails 7.2 had passed end of support and React Router had two advisories.
+  Upgrading to Rails 8.1 then failed to boot on Ruby 3.3.0 (a known parser bug), so Ruby moved to 3.4.
+  The existing test suite is what made those upgrades safe. I kept authentication out of scope and
+  documented it as the main open risk instead of bolting on a half-built login.
+- **CI caught a real mistake:** the first CI run failed because `db:prepare` seeds a fresh database,
+  so specs started with 10,000 rows. Fixed by loading the schema only.
