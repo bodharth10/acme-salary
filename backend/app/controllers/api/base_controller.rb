@@ -12,6 +12,11 @@ module Api
       render json: { error: "bad_request", message: error.message }, status: :bad_request
     end
 
+    # Unknown /api paths get the same JSON error shape as everything else.
+    def route_not_found
+      render json: { error: "not_found", message: "No such endpoint" }, status: :not_found
+    end
+
     private
 
     def render_validation_errors(record)

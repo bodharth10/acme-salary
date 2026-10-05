@@ -3,6 +3,7 @@
 class EmployeeQuery
   DEFAULT_PER_PAGE = 25
   MAX_PER_PAGE = 100
+  MAX_SEARCH_LENGTH = 100
 
   Result = Data.define(:records, :total, :page, :per_page) do
     def total_pages = (total.to_f / per_page).ceil
@@ -25,7 +26,7 @@ class EmployeeQuery
 
   def filtered
     scope = Employee.all
-    scope = scope.search(params[:q]) if params[:q].present?
+    scope = scope.search(params[:q].to_s.first(MAX_SEARCH_LENGTH)) if params[:q].present?
     scope = scope.in_country(params[:country]) if params[:country].present?
     scope = scope.where(department: params[:department]) if params[:department].present?
     scope = scope.where(job_title: params[:job_title]) if params[:job_title].present?

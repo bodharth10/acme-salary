@@ -8,6 +8,8 @@ Rails.application.routes.draw do
       get "insights/overview", to: "insights#overview"
       get "insights/countries/:code", to: "insights#country", as: :country_insights
     end
+
+    match "*unmatched", to: "base#route_not_found", via: :all
   end
 
   get "*path", to: "spa#index", constraints: ->(req) { !req.path.start_with?("/api") }

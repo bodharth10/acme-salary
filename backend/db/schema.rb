@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_10_02_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_05_090000) do
   create_table "employees", force: :cascade do |t|
     t.string "employee_code", null: false
     t.string "full_name", null: false
@@ -29,5 +29,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_10_02_090000) do
     t.index ["employee_code"], name: "index_employees_on_employee_code", unique: true
     t.index ["full_name"], name: "index_employees_on_full_name"
     t.index ["salary"], name: "index_employees_on_salary"
+    t.check_constraint "salary > 0", name: "employees_salary_positive"
   end
 end
