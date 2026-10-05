@@ -18,7 +18,9 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
           working-directory: backend
-      - run: bin/rails db:prepare
+      # schema:load, not db:prepare: prepare also runs db:seed on a fresh
+      # database, and the specs expect to start with an empty one.
+      - run: bin/rails db:schema:load
         env:
           RAILS_ENV: test
       - run: bundle exec rspec
