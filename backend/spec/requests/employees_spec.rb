@@ -3,6 +3,8 @@ require "rails_helper"
 RSpec.describe "Employees API", type: :request do
   def json = JSON.parse(response.body, symbolize_names: true)
 
+  before { sign_in_as(create(:user)) }
+
   let(:valid_attributes) do
     { full_name: "Priya Patel", email: "priya@acme.example", job_title: "Product Manager",
       department: "Product", country_code: "IN", employment_type: "full_time",

@@ -1,5 +1,7 @@
 module Api
   class BaseController < ApplicationController
+    include Authentication
+
     rescue_from ActiveRecord::RecordNotFound do |error|
       render json: { error: "not_found", message: error.message }, status: :not_found
     end
@@ -10,6 +12,11 @@ module Api
 
     rescue_from ActionController::ParameterMissing do |error|
       render json: { error: "bad_request", message: error.message }, status: :bad_request
+    end
+
+    rescue_from ActionController::InvalidAuthenticityToken do
+      render json: { error: "invalid_csrf_token", message: "Your session is out of date. Reload and try again." },
+             status: :forbidden
     end
 
     # Unknown /api paths get the same JSON error shape as everything else.

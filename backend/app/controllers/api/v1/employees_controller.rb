@@ -1,6 +1,8 @@
 module Api
   module V1
     class EmployeesController < BaseController
+      before_action :require_employee_management!, only: %i[create update destroy]
+
       PERMITTED = %i[full_name email job_title department country_code employment_type salary hire_date].freeze
 
       def index

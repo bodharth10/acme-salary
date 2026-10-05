@@ -3,6 +3,8 @@ require "rails_helper"
 RSpec.describe "API hardening", type: :request do
   def json = JSON.parse(response.body, symbolize_names: true)
 
+  before { sign_in_as(create(:user)) }
+
   it "sends security headers and forbids caching on API responses" do
     get "/api/v1/meta"
 

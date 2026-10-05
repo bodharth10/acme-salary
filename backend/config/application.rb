@@ -44,5 +44,16 @@ module Backend
     config.api_only = true
 
     config.middleware.insert_before 0, Middleware::SecurityHeaders
+
+    # Cookie sessions for login. API mode ships without these middlewares.
+    # FORCE_SSL=false (local production runs over http) also drops the
+    # Secure flag, otherwise the browser would never send the cookie back.
+    config.session_store :cookie_store,
+                         key: "_acme_salary_session",
+                         same_site: :lax,
+                         httponly: true,
+                         secure: Rails.env.production? && ENV.fetch("FORCE_SSL", "true") == "true"
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use config.session_store, config.session_options
   end
 end

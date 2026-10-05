@@ -3,6 +3,8 @@ require "rails_helper"
 RSpec.describe "Insights and meta API", type: :request do
   def json = JSON.parse(response.body, symbolize_names: true)
 
+  before { sign_in_as(create(:user)) }
+
   before do
     create(:employee, country_code: "GB", salary: 60_000)
     create(:employee, country_code: "GB", salary: 70_000)

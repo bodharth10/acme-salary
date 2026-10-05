@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_05_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_05_100000) do
   create_table "employees", force: :cascade do |t|
     t.string "employee_code", null: false
     t.string "full_name", null: false
@@ -30,5 +30,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_05_090000) do
     t.index ["full_name"], name: "index_employees_on_full_name"
     t.index ["salary"], name: "index_employees_on_salary"
     t.check_constraint "salary > 0", name: "employees_salary_positive"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "email", null: false
+    t.string "password_digest", null: false
+    t.string "role", default: "viewer", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.check_constraint "role IN ('hr_manager', 'viewer')", name: "users_role_known"
   end
 end

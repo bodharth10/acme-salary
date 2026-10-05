@@ -16,6 +16,27 @@ class Rack::Attack
     request.ip if request.path.start_with?("/api/") && !request.get? && !request.head?
   end
 
+  # Slow down password guessing: by source IP and by targeted account.
+  LOGIN_LIMIT = 5 # attempts per minute
+  LOGIN_PATH = "/api/v1/session".freeze
+
+  throttle("logins/ip", limit: ->(_request) { LOGIN_LIMIT }, period: 1.minute) do |request|
+    request.ip if request.post? && request.path == LOGIN_PATH
+  end
+
+  throttle("logins/email", limit: ->(_request) { LOGIN_LIMIT }, period: 1.minute) do |request|
+    login_email(request) if request.post? && request.path == LOGIN_PATH
+  end
+
+  # The SPA posts JSON, which Rack does not parse into request.params.
+  def self.login_email(request)
+    body = request.body.read
+    request.body.rewind
+    JSON.parse(body).dig("session", "email").to_s.strip.downcase.presence
+  rescue JSON::ParserError, TypeError
+    nil
+  end
+
   self.throttled_responder = lambda do |request|
     retry_after = (request.env["rack.attack.match_data"] || {})[:period]
     body = { error: "rate_limited", message: "Too many requests. Please retry shortly." }.to_json

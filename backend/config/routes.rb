@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      resource :session, only: %i[show create destroy]
       resources :employees, only: %i[index show create update destroy]
       get "meta", to: "meta#show"
       get "insights/overview", to: "insights#overview"
